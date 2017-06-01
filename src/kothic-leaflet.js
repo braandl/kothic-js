@@ -18,9 +18,10 @@ L.TileLayer.Kothic = L.GridLayer.extend({
         styles: MapCSS.availableStyles
     },
 
-    initialize: function(url, runtime, floor, options) {
+    initialize: function(url, runtime, building_id, floor, options) {
         L.Util.setOptions(this, options);
         this.runtime = runtime;
+        this.buildingId = building_id;
         this.currentFloor = floor;
         this._url = url;
         this._canvases = {};
@@ -138,9 +139,9 @@ L.TileLayer.Kothic = L.GridLayer.extend({
     },
 
     _loadScript: function(url, tilePoint, zoom, done) {
-        this.runtime.load(this, "GetMapTile",
+        this.runtime(this, "GetMapTile",
             {
-                building_id: this.runtime.buildingId,
+                building_id: this.buildingId,
                 floor: this.currentFloor,
                 x: tilePoint.x,
                 y: tilePoint.y,
