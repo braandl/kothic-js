@@ -1,20 +1,21 @@
 
-Kothic.geom = {
-    transformPoint: function (point, ws, hs) {
-		return [ws * point[0], hs * point[1]];
-    },
+export default class Geom {
 
-    transformPoints: function (points, ws, hs) {
-        var transformed = [], i, len;
+    static transformPoint (point, ws, hs) {
+		return [ws * point[0], hs * point[1]];
+    }
+
+    static transformPoints (points, ws, hs) {
+        let transformed = [], i, len;
         for (i = 0, len = points.length; i < len; i++) {
-			if (points[i] != undefined)
+			if (points[i] !== undefined)
 				transformed.push(this.transformPoint(points[i], ws, hs));
         }
         return transformed;
-    },
+    }
 
-    getReprPoint: function (feature) {
-        var point, len;
+    static getReprPoint (feature) {
+        let point, len;
         switch (feature.type) {
         case 'Point':
             point = feature.coordinates;
@@ -23,8 +24,8 @@ Kothic.geom = {
             point = feature.reprpoint;
             break;
         case 'LineString':
-            len = Kothic.geom.getPolyLength(feature.coordinates);
-            point = Kothic.geom.getAngleAndCoordsAtLength(feature.coordinates, len / 2, 0);
+            len = Geom.getPolyLength(feature.coordinates);
+            point = Geom.getAngleAndCoordsAtLength(feature.coordinates, len / 2, 0);
             point = [point[1], point[2]];
             break;
         case 'GeometryCollection':
@@ -43,10 +44,10 @@ Kothic.geom = {
             return;
         }
         return point;
-    },
+    }
 
-    getPolyLength: function (points) {
-        var pointsLen = points.length,
+    static getPolyLength (points) {
+        let pointsLen = points.length,
                 c, pc, i,
                 dx, dy,
                 len = 0;
@@ -59,10 +60,10 @@ Kothic.geom = {
             len += Math.sqrt(dx * dx + dy * dy);
         }
         return len;
-    },
+    }
 
-    getAngleAndCoordsAtLength: function (points, dist, width) {
-        var pointsLen = points.length,
+    static getAngleAndCoordsAtLength (points, dist, width) {
+        let pointsLen = points.length,
             dx, dy, x, y,
             i, c, pc,
             len = 0,
@@ -108,5 +109,5 @@ Kothic.geom = {
             len += segLen;
         }
     }
-};
+}
 

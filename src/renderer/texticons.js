@@ -1,15 +1,19 @@
+import Style from "../style/style";
+import Geom from "../utils/geom";
+import MapCSS from "../style/mapcss";
+import TextOnPath from "./text";
 
-Kothic.texticons = {
+export default class Texticons {
 
-    render: function (ctx, feature, collides, ws, hs, renderText, renderIcon) {
-        var style = feature.style, img, point, w, h;
+    static render(ctx, feature, collides, ws, hs, renderText, renderIcon) {
+        let style = feature.style, img, point, w, h;
 
         if (renderIcon || (renderText && feature.type !== 'LineString')) {
-            var reprPoint = Kothic.geom.getReprPoint(feature);
+            let reprPoint = Geom.getReprPoint(feature);
             if (!reprPoint) {
                 return;
             }
-            point = Kothic.geom.transformPoint(reprPoint, ws, hs);
+            point = Geom.transformPoint(reprPoint, ws, hs);
         }
 
         if (renderIcon) {
@@ -37,17 +41,17 @@ Kothic.texticons = {
             }
         }
 
-        var text = String(style.text).trim();
+        let text = String(style.text).trim();
 
         if (renderText && text) {
-            Kothic.style.setStyles(ctx, {
+            Style.setStyles(ctx, {
                 lineWidth: style['text-halo-radius'] * 2,
-                font: Kothic.style.getFontString(style['font-family'], style['font-size'], style)
+                font: Style.getFontString(style['font-family'], style['font-size'], style)
             });
 
-            var halo = (style.hasOwnProperty('text-halo-radius'));
+            let halo = (style.hasOwnProperty('text-halo-radius'));
 
-            Kothic.style.setStyles(ctx, {
+            Style.setStyles(ctx, {
                 fillStyle: style['text-color'] || '#000000',
                 strokeStyle: style['text-halo-color'] || '#ffffff',
                 globalAlpha: style['text-opacity'] || style.opacity || 1,
@@ -63,7 +67,7 @@ Kothic.texticons = {
                 text = text.replace(/(^|\s)\S/g, function(ch) { return ch.toUpperCase(); });
 
             if (feature.type === 'Polygon' || feature.type === 'Point') {
-                var textWidth = ctx.measureText(text).width,
+                let textWidth = ctx.measureText(text).width,
                     letterWidth = textWidth / text.length,
                     collisionWidth = textWidth,
                     collisionHeight = letterWidth * 2.5,
@@ -79,13 +83,13 @@ Kothic.texticons = {
                 }
                 ctx.fillText(text, point[0], point[1] + offset);
 
-                var padding = style['-x-kot-min-distance'] || 20;
+                let padding = style['-x-kot-min-distance'] || 20;
                 collides.addPointWH([point[0], point[1] + offset], collisionWidth, collisionHeight, padding, feature.kothicId);
 
             } else if (feature.type === 'LineString') {
 
-                var points = Kothic.geom.transformPoints(feature.coordinates, ws, hs);
-                Kothic.textOnPath(ctx, points, text, halo, collides);
+                let points = Geom.transformPoints(feature.coordinates, ws, hs);
+                new TextOnPath(ctx, points, text, halo, collides);
             }
         }
 
@@ -94,7 +98,7 @@ Kothic.texticons = {
                 Math.floor(point[0] - w / 2),
                 Math.floor(point[1] - h / 2), w, h);
 
-            var padding2 = parseFloat(style['-x-kot-min-distance']) || 0;
+            let padding2 = parseFloat(style['-x-kot-min-distance']) || 0;
             collides.addPointWH(point, w, h, padding2, feature.kothicId);
         }
     }

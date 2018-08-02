@@ -1,26 +1,40 @@
+import MapCSS from "./mapcss";
 
-Kothic.style = {
+export default class Style {
 
-    defaultCanvasStyles: {
-        strokeStyle: 'rgba(0,0,0,0.5)',
-        fillStyle: 'rgba(0,0,0,0.5)',
-        lineWidth: 1,
-        lineCap: 'round',
-        lineJoin: 'round',
-        textAlign: 'center',
-        textBaseline: 'middle'
-    },
+    constructor() {
+        this._defaultCanvasStyles = {
+            strokeStyle: 'rgba(0,0,0,0.5)',
+            fillStyle:
+                'rgba(0,0,0,0.5)',
+            lineWidth:
+                1,
+            lineCap:
+                'round',
+            lineJoin:
+                'round',
+            textAlign:
+                'center',
+            textBaseline:
+                'middle'
+        }
+    }
 
-    populateLayers: function (features, zoom, styles) {
-        var layers = {},
+
+    static get defaultCanvasStyles() {
+        return this._defaultCanvasStyles;
+    }
+
+    static populateLayers(features, zoom, styles) {
+        let layers = {},
             i, len, feature, layerId, layerStyle;
 
-        var styledFeatures = Kothic.style.styleFeatures(features, zoom, styles);
+        let styledFeatures = Style.styleFeatures(features, zoom, styles);
 
         for (i = 0, len = styledFeatures.length; i < len; i++) {
             feature = styledFeatures[i];
             layerStyle = feature.style['-x-mapnik-layer'];
-            layerId = !layerStyle ? feature.properties.layer || 1000:
+            layerId = !layerStyle ? feature.properties.layer || 1000 :
                 layerStyle === 'top' ? 10000 : layerStyle;
 
             layers[layerId] = layers[layerId] || [];
@@ -28,10 +42,10 @@ Kothic.style = {
         }
 
         return layers;
-    },
+    }
 
-    getStyle: function (feature, zoom, styleNames) {
-        var shape = feature.type,
+    static getStyle(feature, zoom, styleNames) {
+        let shape = feature.type,
             type, selector;
         if (shape === 'LineString' || shape === 'MultiLineString') {
             type = 'way';
@@ -44,16 +58,16 @@ Kothic.style = {
             selector = 'node';
         }
 
-        return MapCSS.restyle(styleNames, feature.properties, zoom, type, selector);
-    },
+        return MapCSS.shared.restyle(styleNames, feature.properties, zoom, type, selector);
+    }
 
-    styleFeatures: function (features, zoom, styleNames) {
-        var styledFeatures = [],
+    static styleFeatures(features, zoom, styleNames) {
+        let styledFeatures = [],
             i, j, len, feature, style, restyledFeature, k;
 
         for (i = 0, len = features.length; i < len; i++) {
             feature = features[i];
-            style = this.getStyle(feature, zoom, styleNames);
+            style = Style.getStyle(feature, zoom, styleNames);
             for (j in style) {
                 if (j === 'default') {
                     restyledFeature = feature;
@@ -76,26 +90,26 @@ Kothic.style = {
 
         styledFeatures.sort(function (a, b) {
             return a.zIndex < b.zIndex ? -1 :
-                    a.zIndex > b.zIndex ? 1 : 0;
+                a.zIndex > b.zIndex ? 1 : 0;
         });
 
         return styledFeatures;
-    },
+    }
 
-    getFontString: function (name, size, st) {
+    static getFontString(name, size, st) {
         name = name || '';
         size = size || 9;
 
-        var family = name ? name + ', ' : '';
+        let family = name ? name + ', ' : '';
 
         name = name.toLowerCase();
 
-        var styles = [];
+        let styles = [];
         if (st['font-style'] === 'italic' || st['font-style'] === 'oblique') {
             styles.push(st['font-style']);
         }
-        if (st['font-variant'] === 'small-caps') {
-            styles.push(st['font-variant']);
+        if (st['font-letiant'] === 'small-caps') {
+            styles.push(st['font-letiant']);
         }
         if (st['font-weight'] === 'bold') {
             styles.push(st['font-weight']);
@@ -111,14 +125,14 @@ Kothic.style = {
         styles.push(family);
 
         return styles.join(' ');
-    },
+    }
 
-    setStyles: function (ctx, styles) {
-        var i;
+    static setStyles(ctx, styles) {
+        let i;
         for (i in styles) {
             if (styles.hasOwnProperty(i)) {
                 ctx[i] = styles[i];
             }
         }
     }
-};
+}

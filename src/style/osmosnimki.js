@@ -1,6 +1,18 @@
-(function (MapCSS) {
-    'use strict';
-    function restyle(style, tags, zoom, type, selector) {
+import MapCSS from "./mapcss";
+
+export default class osmosnimki {
+
+    constructor() {
+        this.sprite_images = {};
+        this.external_images = [];
+        this.presence_tags = ['shop'];
+        this.value_tags = ['color', 'amenity', 'pk', 'building ', 'wall', 'surface', 'marking', 'service', 'addr:housenumber', 'population', 'leisure', 'waterway', 'aeroway', 'landuse', 'barrier', 'colour', 'railway', 'oneway', 'religion', 'tourism', 'admin_level', 'transport', 'name', 'building', 'place', 'residential', 'highway', 'ele', 'living_street', 'natural', 'boundary', 'capital'];
+
+        MapCSS.loadStyle('styles/contagt', this.restyle, this.sprite_images, this.external_images, this.presence_tags, this.value_tags);
+        MapCSS.preloadExternalImages('styles/contagt');
+    }
+
+    restyle(style, tags, zoom, type, selector) {
         var s_default = {}, s_centerline = {}, s_ticks = {}, s_label = {};
         
         if (tags["surface"] === "background") 
@@ -964,10 +976,4 @@
         return style;
     }
 
-    var sprite_images = {
-        
-    }, external_images = [], presence_tags = ['shop'], value_tags = ['color', 'amenity', 'pk', 'building ', 'wall', 'surface', 'marking', 'service', 'addr:housenumber', 'population', 'leisure', 'waterway', 'aeroway', 'landuse', 'barrier', 'colour', 'railway', 'oneway', 'religion', 'tourism', 'admin_level', 'transport', 'name', 'building', 'place', 'residential', 'highway', 'ele', 'living_street', 'natural', 'boundary', 'capital'];
-
-    MapCSS.loadStyle('styles/contagt', restyle, sprite_images, external_images, presence_tags, value_tags);
-    MapCSS.preloadExternalImages('styles/contagt');
-})(MapCSS);
+}

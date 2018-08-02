@@ -1,7 +1,24 @@
+import MapCSS from "../style/mapcss";
+import Style from "../style/style";
+import Path from "./path";
 
-Kothic.polygon = {
-    render: function (ctx, feature, nextFeature, ws, hs, granularity) {
-        var style = feature.style,
+let polygon = null;
+
+export default class Polygon {
+
+    constructor() {
+        if (polygon == null) {
+            polygon = this;
+        }
+        return polygon
+    }
+
+    static get shared() {
+        return new Polygon();
+    }
+
+    render(ctx, feature, nextFeature, ws, hs, granularity) {
+        let style = feature.style,
             nextStyle = nextFeature && nextFeature.style;
 
         if (!this.pathOpened) {
@@ -9,7 +26,7 @@ Kothic.polygon = {
             ctx.beginPath();
         }
 
-        Kothic.path(ctx, feature, false, true, ws, hs, granularity);
+        new Path(ctx, feature, false, true, ws, hs, granularity);
 
         if (nextFeature &&
                 (nextStyle['fill-color'] === style['fill-color']) &&
@@ -21,14 +38,14 @@ Kothic.polygon = {
         this.fill(ctx, style);
 
         this.pathOpened = false;
-    },
+    }
 
-    fill: function (ctx, style, fillFn) {
-        var opacity = style["fill-opacity"] || style.opacity, image;
+    fill(ctx, style, fillFn) {
+        let opacity = style["fill-opacity"] || style.opacity, image;
 
         if (style.hasOwnProperty('fill-color')) {
             // first pass fills with solid color
-            Kothic.style.setStyles(ctx, {
+            Style.setStyles(ctx, {
                 fillStyle: style["fill-color"] || "#000000",
                 globalAlpha: opacity || 1
             });
@@ -43,7 +60,7 @@ Kothic.polygon = {
             // second pass fills with texture
             image = MapCSS.getImage(style['fill-image']);
             if (image) {
-                Kothic.style.setStyles(ctx, {
+                Style.setStyles(ctx, {
                     fillStyle: ctx.createPattern(image, 'repeat'),
                     globalAlpha: opacity || 1
                 });
@@ -55,4 +72,4 @@ Kothic.polygon = {
             }
         }
     }
-};
+}

@@ -1,37 +1,46 @@
+let MapCSSInstance = null;
 
-var MapCSS = {
-    styles: {},
-    availableStyles: [],
-    images: {},
-    locales: [],
-    presence_tags: [],
-    value_tags: [],
-    cache: {},
-    debug: {hit: 0, miss: 0},
+export default class MapCSS {
 
-    onError: function () {
-    },
+    constructor() {
+        if (MapCSSInstance == null) {
+            MapCSSInstance = this;
+            this._styles= {};
+            this._availableStyles= [];
+            this._images= {};
+            this._locales= [];
+            this._presence_tags= [];
+            this._value_tags= [];
+            this._cache= {};
+            this._debug= {hit: 0, miss: 0}
+        }
+        return MapCSSInstance
+    }
 
-    onImagesLoad: function () {
-    },
+    static get shared() {
+        return new MapCSS();
+    }
 
-    /**
+    static onError() {
+    }
+
+    static onImagesLoad() {
+    }/**
      * Incalidate styles cache
      */
-    invalidateCache: function () {
-        this.cache = {};
-    },
+    static invalidateCache() {
+        this._cache = {};
+    }
 
-    e_min: function (/*...*/) {
+    static e_min(/*...*/) {
         return Math.min.apply(null, arguments);
-    },
+    }
 
-    e_max: function (/*...*/) {
+    static e_max(/*...*/) {
         return Math.max.apply(null, arguments);
-    },
-
-    e_any: function (/*...*/) {
-        var i;
+    }
+    static e_any(/*...*/) {
+        let i;
 
         for (i = 0; i < arguments.length; i++) {
             if (typeof(arguments[i]) !== 'undefined' && arguments[i] !== '') {
@@ -40,45 +49,38 @@ var MapCSS = {
         }
 
         return '';
-    },
-
-    e_num: function (arg) {
+    }
+    static e_num(arg) {
         if (!isNaN(parseFloat(arg))) {
             return parseFloat(arg);
         } else {
             return '';
         }
-    },
-
-    e_str: function (arg) {
+    }
+    static e_str(arg) {
         return arg;
-    },
-
-    e_int: function (arg) {
+    }
+    static e_int(arg) {
         return parseInt(arg, 10);
-    },
-
-    e_tag: function (obj, tag) {
+    }
+    static e_tag(obj, tag) {
         if (obj.hasOwnProperty(tag) && obj[tag] !== null) {
             return tag;
         } else {
             return '';
         }
-    },
-
-    e_prop: function (obj, tag) {
+    }
+    static e_prop(obj, tag) {
         if (obj.hasOwnProperty(tag) && obj[tag] !== null) {
             return obj[tag];
         } else {
             return '';
         }
-    },
-
-    e_sqrt: function (arg) {
+    }
+    static e_sqrt(arg) {
         return Math.sqrt(arg);
-    },
-
-    e_boolean: function (arg, if_exp, else_exp) {
+    }
+    static e_boolean(arg, if_exp, else_exp) {
         if (typeof(if_exp) === 'undefined') {
             if_exp = 'true';
         }
@@ -92,9 +94,8 @@ var MapCSS = {
         } else {
             return if_exp;
         }
-    },
-
-    e_metric: function (arg) {
+    }
+    static e_metric(arg) {
         if (/\d\s*mm$/.test(arg)) {
             return 1000 * parseInt(arg, 10);
         } else if (/\d\s*cm$/.test(arg)) {
@@ -110,14 +111,12 @@ var MapCSS = {
         } else {
             return parseInt(arg, 10);
         }
-    },
-
-    e_zmetric: function (arg) {
-        return MapCSS.e_metric(arg);
-    },
-
-    e_localize: function (tags, text) {
-        var locales = MapCSS.locales, i, tag;
+    }
+    static  e_zmetric(arg) {
+        return MapCSS.shared.e_metric(arg);
+    }
+    static e_localize(tags, text) {
+        let locales = MapCSS.shared._locales, i, tag;
 
         for (i = 0; i < locales.length; i++) {
             tag = text + ':' + locales[i];
@@ -127,30 +126,30 @@ var MapCSS = {
         }
 
         return tags[text];
-    },
+    }
 
-    loadStyle: function (style, restyle, sprite_images, external_images, presence_tags, value_tags) {
-        var i;
+    static loadStyle(style, restyle, sprite_images, external_images, presence_tags, value_tags) {
+        let i;
         sprite_images = sprite_images || [];
         external_images = external_images || [];
 
         if (presence_tags) {
             for (i = 0; i < presence_tags.length; i++) {
-                if (this.presence_tags.indexOf(presence_tags[i]) < 0) {
-                    this.presence_tags.push(presence_tags[i]);
+                if (MapCSS.shared._presence_tags.indexOf(presence_tags[i]) < 0) {
+                    MapCSS.shared._presence_tags.push(presence_tags[i]);
                 }
             }
         }
 
         if (value_tags) {
             for (i = 0; i < value_tags.length; i++) {
-                if (this.value_tags.indexOf(value_tags[i]) < 0) {
-                    this.value_tags.push(value_tags[i]);
+                if (MapCSS.shared._value_tags.indexOf(value_tags[i]) < 0) {
+                    MapCSS.shared._value_tags.push(value_tags[i]);
                 }
             }
         }
 
-        MapCSS.styles[style] = {
+        MapCSS.shared._styles[style] = {
             restyle: restyle,
             images: sprite_images,
             external_images: external_images,
@@ -159,70 +158,66 @@ var MapCSS = {
             external_images_loaded: !external_images.length
         };
 
-        MapCSS.availableStyles.push(style);
-    },
-
-    /**
-     * Call MapCSS.onImagesLoad callback if all sprite and external
+        MapCSS.shared._availableStyles.push(style);
+    }/**
+     * Call MapCSS.shared.onImagesLoad callback if all sprite and external
      * images was loaded
      */
-    _onImagesLoad: function (style) {
-        if (MapCSS.styles[style].external_images_loaded &&
-                MapCSS.styles[style].sprite_loaded) {
+    static _onImagesLoad(style) {
+        if (MapCSS.shared._styles[style].external_images_loaded &&
+                MapCSS.shared._styles[style].sprite_loaded) {
             MapCSS.onImagesLoad();
         }
-    },
-
-    preloadSpriteImage: function (style, url) {
+    }
+    static preloadSpriteImage(style, url) {
 		
-        var images = MapCSS.styles[style].images,
+        let images = MapCSS.shared._styles[style]._images,
             img = new Image();
 
-        delete MapCSS.styles[style].images;
+        delete MapCSS.shared._styles[style]._images;
 
         img.onload = function () {
-            var image;
+            let image;
             for (image in images) {
                 if (images.hasOwnProperty(image)) {
                     images[image].sprite = img;
-                    MapCSS.images[image] = images[image];
+                    MapCSS.shared._images[image] = images[image];
                 }
             }
-            MapCSS.styles[style].sprite_loaded = true;
+            MapCSS.shared._styles[style].sprite_loaded = true;
             MapCSS._onImagesLoad(style);
         };
         img.onerror = function (e) {
             MapCSS.onError(e);
         };
         img.src = url;
-    },
-
-    preloadExternalImages: function (style, urlPrefix) {
-        var external_images = MapCSS.styles[style].external_images;
-        delete MapCSS.styles[style].external_images;
+    }
+    static preloadExternalImages(style, urlPrefix) {
+        let external_images = MapCSS.shared._styles[style].external_images;
+        delete MapCSS.shared._styles[style].external_images;
 
         urlPrefix = urlPrefix || '';
-        var len = external_images.length, loaded = 0, i;
+        let len = external_images.length, loaded = 0, i;
 
         function loadImage(url) {
-            var img = new Image();
+            let img = new Image();
             img.onload = function () {
                 loaded++;
-                MapCSS.images[url] = {
+                MapCSS.shared._images[url] = {
                     sprite: img,
                     height: img.height,
                     width: img.width,
                     offset: 0
                 };
                 if (loaded === len) {
-                    MapCSS.styles[style].external_images_loaded = true;
+                    MapCSS.shared._styles[style].external_images_loaded = true;
                     MapCSS._onImagesLoad(style);
                 }
             };
             img.onerror = function () {
                 loaded++;
                 if (loaded === len) {
-                    MapCSS.styles[style].external_images_loaded = true;
+                    MapCSS.shared._styles[style].external_images_loaded = true;
                     MapCSS._onImagesLoad(style);
                 }
             };
@@ -232,13 +227,12 @@ var MapCSS = {
         for (i = 0; i < len; i++) {
             loadImage(urlPrefix + external_images[i]);
         }
-    },
-
-    getImage: function (ref) {
-        var img = MapCSS.images[ref];
+    }
+    static getImage(ref) {
+        let img = MapCSS.shared._images[ref];
 
         if (img && img.sprite) {
-            var canvas = document.createElement('canvas');
+            let canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
 
@@ -246,42 +240,40 @@ var MapCSS = {
                     0, img.offset, img.width, img.height,
                     0, 0, img.width, img.height);
 
-            img = MapCSS.images[ref] = canvas;
+            img = MapCSS.shared._images[ref] = canvas;
         }
 
         return img;
-    },
-
-    getTagKeys: function (tags, zoom, type, selector) {
-        var keys = [], i;
-        for (i = 0; i < this.presence_tags.length; i++) {
-            if (tags.hasOwnProperty(this.presence_tags[i])) {
-                keys.push(this.presence_tags[i]);
+    }
+    getTagKeys(tags, zoom, type, selector) {
+        let keys = [], i;
+        for (i = 0; i < this._presence_tags.length; i++) {
+            if (tags.hasOwnProperty(this._presence_tags[i])) {
+                keys.push(this._presence_tags[i]);
             }
         }
 
-        for (i = 0; i < this.value_tags.length; i++) {
-            if (tags.hasOwnProperty(this.value_tags[i])) {
-                keys.push(this.value_tags[i] + ':' + tags[this.value_tags[i]]);
+        for (i = 0; i < this._value_tags.length; i++) {
+            if (tags.hasOwnProperty(this._value_tags[i])) {
+                keys.push(this._value_tags[i] + ':' + tags[this._value_tags[i]]);
             }
         }
 
         return [zoom, type, selector, keys.join(':')].join(':');
-    },
+    }
+    restyle(styleNames, tags, zoom, type, selector) {
+        let i, key = this.getTagKeys(tags, zoom, type, selector), actions = this._cache[key] || {};
 
-    restyle: function (styleNames, tags, zoom, type, selector) {
-        var i, key = this.getTagKeys(tags, zoom, type, selector), actions = this.cache[key] || {};
-
-        if (!this.cache.hasOwnProperty(key)) {
-            this.debug.miss += 1;
+        if (!this._cache.hasOwnProperty(key)) {
+            this._debug.miss += 1;
             for (i = 0; i < styleNames.length; i++) {
-                actions = MapCSS.styles[styleNames[i]].restyle(actions, tags, zoom, type, selector);
+                actions = MapCSS.shared._styles[styleNames[i]].restyle(actions, tags, zoom, type, selector);
             }
-            this.cache[key] = actions;
+            this._cache[key] = actions;
         } else {
-            this.debug.hit += 1;
+            this._debug.hit += 1;
         }
 
         return actions;
     }
-};
+}

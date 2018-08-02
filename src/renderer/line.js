@@ -1,8 +1,25 @@
+import Path from "./path";
+import Style from "../style/style";
+import MapCSS from "../style/mapcss";
 
-Kothic.line = {
+let line = null;
 
-    renderCasing: function (ctx, feature, nextFeature, ws, hs, granularity) {
-        var style = feature.style,
+export default class Line {
+
+    constructor() {
+        if (line == null) {
+            line = this;
+            this.pathOpened = false;
+        }
+        return line;
+    }
+
+    static get shared() {
+        return new Line();
+    }
+
+    renderCasing(ctx, feature, nextFeature, ws, hs, granularity) {
+        let style = feature.style,
             nextStyle = nextFeature && nextFeature.style;
 
         if (!this.pathOpened) {
@@ -10,7 +27,7 @@ Kothic.line = {
             ctx.beginPath();
         }
 
-        Kothic.path(ctx, feature, style["casing-dashes"] || style.dashes, false, ws, hs, granularity);
+        new Path(ctx, feature, style["casing-dashes"] || style.dashes, false, ws, hs, granularity);
 
         if (nextFeature &&
                 nextStyle.width === style.width &&
@@ -21,7 +38,7 @@ Kothic.line = {
             return;
         }
 
-        Kothic.style.setStyles(ctx, {
+        Style.setStyles(ctx, {
             lineWidth: 2 * style["casing-width"] + (style.hasOwnProperty("width") ? style.width : 0),
             strokeStyle: style["casing-color"] || "#000000",
             lineCap: style["casing-linecap"] || style.linecap || "butt",
@@ -31,10 +48,10 @@ Kothic.line = {
 
         ctx.stroke();
         this.pathOpened = false;
-    },
+    }
 
-    render: function (ctx, feature, nextFeature, ws, hs, granularity) {
-        var style = feature.style,
+    render(ctx, feature, nextFeature, ws, hs, granularity) {
+        let style = feature.style,
             nextStyle = nextFeature && nextFeature.style;
 
         if (!this.pathOpened) {
@@ -42,7 +59,7 @@ Kothic.line = {
             ctx.beginPath();
         }
 
-        Kothic.path(ctx, feature, style.dashes, false, ws, hs, granularity);
+        new Path(ctx, feature, style.dashes, false, ws, hs, granularity);
 
         if (nextFeature &&
                 nextStyle.width === style.width &&
@@ -53,7 +70,7 @@ Kothic.line = {
         }
 
         if ('color' in style || !('image' in style)) {
-            var t_width = style.width || 1,
+            let t_width = style.width || 1,
                 t_linejoin = "round",
                 t_linecap = "round";
 
@@ -61,7 +78,7 @@ Kothic.line = {
                 t_linejoin = "miter";
                 t_linecap = "butt";
             }
-            Kothic.style.setStyles(ctx, {
+            Style.setStyles(ctx, {
                 lineWidth: t_width,
                 strokeStyle: style.color || '#000000',
                 lineCap: style.linecap || t_linecap,
@@ -75,10 +92,10 @@ Kothic.line = {
 
         if ('image' in style) {
             // second pass fills with texture
-            var image = MapCSS.getImage(style.image);
+            let image = MapCSS.getImage(style.image);
 
             if (image) {
-                Kothic.style.setStyles(ctx, {
+                Style.setStyles(ctx, {
                     strokeStyle: ctx.createPattern(image, 'repeat') || "#000000",
                     lineWidth: style.width || 1,
                     lineCap: style.linecap || "round",
@@ -90,7 +107,5 @@ Kothic.line = {
             }
         }
         this.pathOpened = false;
-    },
-
-    pathOpened: false
+    }
 };

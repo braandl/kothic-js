@@ -1,25 +1,26 @@
+import rbush from "./rbush";
 
-Kothic.CollisionBuffer = function (height, width) {
-    this.buffer = rbush();
-    this.height = height;
-    this.width = width;
-};
+export default class CollisionBuffer {
+    constructor(height, width) {
+        this.buffer = new rbush();
+        this.height = height;
+        this.width = width;
+    }
 
-Kothic.CollisionBuffer.prototype = {
-    addPointWH: function (point, w, h, d, id) {
-        this.buffer.insert(this.getBoxFromPoint(point, w, h, d, id));
-    },
+    addPointWH(point, w, h, d, id) {
+        this.buffer.insert(CollisionBuffer.getBoxFromPoint(point, w, h, d, id));
+    }
 
-    addPoints: function (params) {
-        var points = [];
-        for (var i = 0, len = params.length; i < len; i++) {
-            points.push(this.getBoxFromPoint.apply(this, params[i]));
+    addPoints(params) {
+        let points = [];
+        for (let i = 0, len = params.length; i < len; i++) {
+            points.push(CollisionBuffer.getBoxFromPoint.apply(this, params[i]));
         }
         this.buffer.load(points);
-    },
+    }
 
-    checkBox: function (b, id) {
-        var result = this.buffer.search(b),
+    checkBox(b, id) {
+        let result = this.buffer.search(b),
             i, len;
 
         if (b[0] < 0 || b[1] < 0 || b[2] > this.width || b[3] > this.height) { return true; }
@@ -32,14 +33,14 @@ Kothic.CollisionBuffer.prototype = {
         }
 
         return false;
-    },
+    }
 
-    checkPointWH: function (point, w, h, id) {
-        return this.checkBox(this.getBoxFromPoint(point, w, h, 0), id);
-    },
+    checkPointWH(point, w, h, id) {
+        return this.checkBox(CollisionBuffer.getBoxFromPoint(point, w, h, 0), id);
+    }
 
-    getBoxFromPoint: function (point, w, h, d, id) {
-        var dx = w / 2 + d,
+    static getBoxFromPoint(point, w, h, d, id) {
+        let dx = w / 2 + d,
             dy = h / 2 + d;
         return [
             point[0] - dx,
@@ -48,5 +49,5 @@ Kothic.CollisionBuffer.prototype = {
             point[1] + dy,
             id
         ];
-       }
-};
+    }
+}
