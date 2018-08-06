@@ -153,12 +153,14 @@ L.TileLayer.Kothic = L.GridLayer.extend({
                 z: zoom
             }, function (response) {
                 let content = null;
-                if (response.type === ".msgpack") {
+                /*if (response.type === ".msgpack") {
                     content = msgpack.unpack(atob(response.res));
-                } else if (response.type === ".json") {
+                } else*/ if (response.type === ".json") {
                     content = JSON.parse(response.res);
+                    this._onKothicDataResponse(content, zoom, tilePoint.x, tilePoint.y, done);
+                } else {
+                    console.error("msgpack not supported in this version.");
                 }
-                this._onKothicDataResponse(content, zoom, tilePoint.x, tilePoint.y, done);
             });
     }
 });
