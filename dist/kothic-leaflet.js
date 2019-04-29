@@ -6,7 +6,7 @@ L.TileLayer.Kothic = L.GridLayer.extend({
         maxZoom: 22,
         updateWhenIdle: true,
         unloadInvisibleTiles: true,
-        attribution: 'Map data &copy; 2017 <a href="http://osm.org/copyright">OpenStreetMap</a> contributors,' +
+        attribution: 'Map data &copy; 2019 <a href="http://osm.org/copyright">OpenStreetMap</a> contributors,' +
                      ' Rendering by <a href="http://github.com/kothic/kothic-js">Kothic JS</a>',
         async: true,
         buffered: false,
@@ -174,8 +174,8 @@ L.TileLayer.Kothic = L.GridLayer.extend({
     _loadJSON: function(url, zoom, x, y, done) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-                if (xhr.status == 200) {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
                     window.onKothicDataResponse(JSON.parse(xhr.responseText), zoom, x, y, done);
                 } else {
                     console.debug("failed:", url, xhr.status);
