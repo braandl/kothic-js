@@ -44,9 +44,9 @@
 	<script type="text/javascript">
         $( document ).ready(function() {
 
-            var tilesUrl = 'test-tile.js?&x={x}&y={y}&z={z}';
-            var mapnik = new L.TileLayer('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png', {
-                attribution: "Map data &copy; 2011 OpenStreetMap contributors, Imagery by <a href='http://osmosnimki.ru'>osmosnimki.ru</a>",
+			var tilesUrl = 'test-tile.json?&x={x}&y={y}&z={z}';
+            var mapnik = new L.TileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
+                attribution: "Map data &copy; 2019 OpenStreetMap contributors, Imagery by <a href='maps.wikimedia.org'>maps.wikimedia.orgu</a>",
                 maxZoom: 22
             });
 
@@ -56,10 +56,12 @@
             });
 
             var map = new L.Map('map', {
-                center: new L.LatLng(53.9, 27.55), // Minsk
+                center: new L.LatLng(53.8973689, 27.5416993), // Minsk
                 zoom: 12,
                 fadeAnimation: false
             });
+
+			map.addLayer(mapnik);
 
             kothic.on('load', function () {
                 var messages = kothic.getDebugMessages(),

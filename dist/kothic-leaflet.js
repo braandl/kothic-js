@@ -126,6 +126,7 @@ L.TileLayer.Kothic = L.GridLayer.extend({
             feature = data.features[i];
             coordinates = feature.coordinates;
             type = data.features[i].type;
+
             if (type === 'Point') {
                 coordinates[1] = tileSize - coordinates[1];
             } else if (type === 'MultiPoint' || type === 'LineString') {
