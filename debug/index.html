@@ -8,7 +8,7 @@
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
     <!-- jQuery. It's not required for Kothic, but still useful for this example -->
-    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+   <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
 
 	<!-- Leaflet -->
 	<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
@@ -123,7 +123,7 @@
             MapCSS.preloadSpriteImage("osmosnimki", "styles/osmosnimki.png");
             MapCSS.preloadSpriteImage("mapnik", "styles/mapnik.png");
 
-            $("#renderer").change(function () {
+            document.getElementById("renderer").addEventListener("change", function () {
                 switch ($("#renderer").val()) {
                     case 'osmosnimki':
                         map.removeLayer(mapnik);
@@ -142,8 +142,8 @@
                         break;
                 }
             });
-            $("#overlay").change(function () {
-                if ($("#overlay").is(':checked')) {
+			document.getElementById("overlay").addEventListener("change", function () {
+                if (document.getElementById("overlay").checked) {
                     kothic.enableStyle('surface');
                 } else {
                     kothic.disableStyle('surface');

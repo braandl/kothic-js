@@ -93,11 +93,7 @@ L.TileLayer.Kothic = L.GridLayer.extend({
                     replace('{y}',tilePoint.y).
                     replace('{z}',rzoom);
         this._canvases[key] = canvas;
-        if (url.endsWith('.json')) {
-            this._loadJSON(url, rzoom, tilePoint.x, tilePoint.y, done);
-        } else {
-            this._loadScript(url, rzoom, tilePoint.x, tilePoint.y, done);
-        }
+        this._loadJSON(url, rzoom, tilePoint.x, tilePoint.y, done);
     },
 
     enableStyle: function(name) {
@@ -158,18 +154,6 @@ L.TileLayer.Kothic = L.GridLayer.extend({
                 feature.reprpoint[1] = tileSize - feature.reprpoint[1];
             }
         }
-    },
-
-    _loadScript: function(url, zoom, x, y, done) {
-        $.ajax({
-            url: url,
-            success: function(data) {
-                if (!(data === null || data === undefined)) {
-                    return;
-                }
-                window.onKothicDataResponse(JSON.parse(data), zoom, x, y, done);
-            }
-        });
     },
 
     _loadJSON: function(url, zoom, x, y, done) {
