@@ -164,9 +164,10 @@ L.TileLayer.Kothic = L.GridLayer.extend({
         $.ajax({
             url: url,
             success: function(data) {
-                if (data != null) {
-                    window.onKothicDataResponse(JSON.parse(data), zoom, x, y, done);
+                if (!(data === null || data === undefined)) {
+                    return;
                 }
+                window.onKothicDataResponse(JSON.parse(data), zoom, x, y, done);
             }
         });
     },

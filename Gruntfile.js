@@ -7,8 +7,8 @@ module.exports = function (grunt) {
             options: {
                 strict: false,
 
-                bitwise: true,
-                curly: true,
+                bitwise: false,
+                curly: false,
                 eqeqeq: true,
                 immed: true,
                 latedef: true,
@@ -17,7 +17,7 @@ module.exports = function (grunt) {
                 noempty: true,
                 nonew: true,
                 sub: true,
-                undef: true,
+                undef: false,
                 unused: true,
 
                 globals: {
